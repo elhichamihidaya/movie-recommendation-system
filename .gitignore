@@ -1,5 +1,0 @@
-# Fichiers et dossiers à ignorer par GitHub
-.vscode/
-__pycache__/
-*.pkl
-*.csv
