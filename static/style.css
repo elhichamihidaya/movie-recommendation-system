@@ -1,0 +1,66 @@
+/* --- FICHIER DE STYLE PERSONNALISÉ --- */
+/* Ce fichier ajoute des finitions professionnelles au projet */
+
+/* 1. Personnalisation de la barre de défilement (Scrollbar) pour un look "Netflix" */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #141414; /* Fond noir */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e50914; /* Rouge vif */
+    border-radius: 6px;
+    border: 3px solid #141414; /* Petit espace noir autour */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ff0a16;
+}
+
+/* 2. Amélioration de la liste d'autocomplétion (quand on tape un film) */
+.autoComplete_wrapper {
+    width: 100%;
+}
+
+.autoComplete_wrapper > ul {
+    background-color: #262626 !important; /* Fond gris foncé */
+    border-radius: 15px !important;
+    border: 1px solid #444 !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
+    color: white !important;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.autoComplete_wrapper > ul > li {
+    padding: 12px 25px !important;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #333;
+}
+
+.autoComplete_wrapper > ul > li:last-child {
+    border-bottom: none;
+}
+
+.autoComplete_wrapper > ul > li:hover {
+    background-color: #e50914 !important; /* Devient rouge au survol */
+    color: white !important;
+    cursor: pointer;
+}
+
+/* 3. Mettre en gras les lettres qui correspondent à la recherche */
+.autoComplete_highlighted {
+    color: #e50914 !important;
+    font-weight: bold;
+}
+
+/* 4. Animation de chargement fluide */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}

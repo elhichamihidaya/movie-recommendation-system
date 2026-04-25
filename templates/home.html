@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Système de Recommandation de Films</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Polices Google -->
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap & Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  
+  <!-- Auto Complete CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/css/autoComplete.min.css">
+  
+  <!-- CSS Personnalisé -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body {
+      background-color: #181818;
+      font-family: 'IBM Plex Sans', sans-serif;
+      color: white;
+    }
+    .movie-container {
+      margin-top: 100px;
+    }
+    #autoComplete {
+      background-color: #ffffff;
+      border-radius: 25px;
+      padding: 15px 25px;
+      width: 100%;
+      max-width: 600px;
+      color: #181818;
+      font-size: 1.1rem;
+    }
+    .btn-search {
+      background-color: #e50914;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 50px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .btn-search:hover:not(:disabled) {
+      background-color: #ff0a16;
+      transform: scale(1.05);
+    }
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container movie-container text-center">
+    <h1 class="mb-5">SYSTÈME DE RECOMMANDATION</h1>
+    
+    <div class="form-group">
+      <input type="text" id="autoComplete" autocomplete="off" placeholder="Entrez le nom d'un film..." required />
+    </div>
+
+    <div class="form-group mt-4">
+      <button class="btn btn-primary btn-search" id="search_button" disabled>ENTRER</button>
+    </div>
+
+    <div id="loader" class="mt-4"></div>
+
+    <div class="fail mt-4" style="display:none;">
+      <h3>Désolé ! Ce film n'est pas dans notre base de données.</h3>
+    </div>
+  </div>
+
+  <div class="footer">
+    Fait avec <span style="color:red;">&hearts;</span> par Hidaya El Hichami
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js"></script>
+  
+  <!-- Conteneur sécurisé pour les données Flask (isole Jinja2 du parseur JavaScript) -->
+  <script id="movie-data" type="application/json">
+    {% if suggestions %}
+      {{ suggestions | tojson | safe }}
+    {% else %}
+      []
+    {% endif %}
+  </script>
+
+  <script>
+    let films = [];
+    try {
+      const rawData = document.getElementById("movie-data").textContent.trim();
+      
+      // On s'assure que Flask a bien interprété le code (et que ce n'est pas le fichier brut ouvert dans le navigateur)
+      if (!rawData.includes("{" + "%") && !rawData.includes("{" + "{")) {
+        films = JSON.parse(rawData);
+      }
+    } catch (e) {
+      console.warn("Info: Les suggestions ne sont pas encore chargées (attente de Flask).");
+    }
+
+    // Initialisation de l'auto-complétion
+    if (Array.isArray(films) && films.length > 0) {
+      new autoComplete({
+        data: {
+          src: films,
+          cache: true,
+        },
+        selector: "#autoComplete",
+        threshold: 2,
+        resultsList: {
+          render: true,
+          element: "ul",
+          destination: document.querySelector("#autoComplete"),
+          position: "afterend",
+        },
+        maxResults: 5,
+        onSelection: feedback => {
+          document.querySelector("#autoComplete").value = feedback.selection.value;
+          document.querySelector("#search_button").disabled = false;
+        }
+      });
+    }
+
+    // Gestion de l'état du bouton
+    const input = document.querySelector("#autoComplete");
+    const btn = document.querySelector("#search_button");
+
+    if (input && btn) {
+      input.addEventListener("input", function() {
+        btn.disabled = (this.value.trim().length === 0);
+      });
+    }
+    document.querySelector("#search_button").addEventListener("click", function() {
+        let movie = document.querySelector("#autoComplete").value;
+        window.location.href = "/recommend?movie=" + encodeURIComponent(movie);
+    });
+  </script>
+</body>
+</html>

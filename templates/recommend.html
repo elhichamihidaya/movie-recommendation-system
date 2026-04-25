@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Résultats de Recommandation</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body {
+      background-color: #181818;
+      color: white;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .movie-details {
+      margin-top: 50px;
+      padding: 30px;
+      background-color: rgba(255,255,255,0.05);
+      border-radius: 15px;
+    }
+    .recommend-title {
+      color: #e50914;
+      margin-top: 50px;
+      text-transform: uppercase;
+    }
+    .movie-card {
+      background-color: #262626;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      transition: 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+    .movie-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    .card-img-top {
+      height: 350px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .card-title {
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 10px;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row movie-details">
+      <div class="col-md-4">
+        <img src="{{poster}}" class="img-fluid rounded shadow" alt="Poster">
+      </div>
+      <div class="col-md-8">
+        <h2 class="text-uppercase" style="color: #e50914;">{{title}}</h2>
+        <p><strong>Genre :</strong> {{genre}}</p>
+        <p><strong>Réalisateur :</strong> {{director}}</p>
+        <p><strong>Casting :</strong> {{cast}}</p>
+        
+        <div class="mt-4 p-3 bg-dark rounded">
+          <h5>Analyse de sentiment :</h5>
+          <p>{{sentiment_result}}</p>
+        </div>
+      </div>
+    </div>
+
+    {% if movie_cards|length > 0 %}
+    <h3 class="text-center recommend-title">Films recommandés pour vous</h3>
+    <p class="text-center text-muted">(Cliquez sur un film pour obtenir de nouvelles recommandations)</p>
+    
+    <div class="row mt-4">
+      {% for poster, title in movie_cards.items() %}
+      <div class="col-md-3 col-sm-6">
+        <div class="card movie-card" onclick="loadMovie('{{title}}')">
+          <img class="card-img-top" src="{{poster}}" alt="{{title}}">
+          <div class="card-body p-0">
+            <h5 class="card-title">{{title|capitalize}}</h5>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    function loadMovie(title) {
+      // Redirige vers la recherche pour ce nouveau film
+      window.location.href = "/recommend?movie=" + encodeURIComponent(title);
+    }
+  </script>
+</body>
+</html>
